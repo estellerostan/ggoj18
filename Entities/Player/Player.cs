@@ -12,7 +12,7 @@ public class Player: KinematicBody
     Camera camera;
     Spatial rotationBodyTop;
     Vector3 velocity = new Vector3();
-
+    Vector3 wishedForDirection = new Vector3();
 
     public override void _Ready()
     {
@@ -23,7 +23,16 @@ public class Player: KinematicBody
 
     public override void _PhysicsProcess(float delta)
     {
-        Vector3 wishedForDirection = new Vector3();
+        processInput(delta);
+        processMovement(delta);
+    }
+
+    public void processInput(float delta) {
+        processWalking(delta);
+        processJumping(delta);
+    }
+
+    private void processWalking(float delta) {
         Transform camXform = camera.GetGlobalTransform();
 
         Vector2 inputMovementVector = new Vector2();
@@ -49,7 +58,9 @@ public class Player: KinematicBody
 
         wishedForDirection += -camXform.basis.z.Normalized() * inputMovementVector.y;
         wishedForDirection += camXform.basis.x.Normalized() * inputMovementVector.x;
+    }
 
+    private void processJumping(float delta) {
         if(IsOnFloor())
         {
             if(Input.IsActionJustPressed("movement_jump"))
@@ -57,7 +68,9 @@ public class Player: KinematicBody
                 velocity.y = JUMP_SPEED;
             }
         }
+    }
 
+    public void processMovement(float delta) {
         wishedForDirection.y = 0;
         wishedForDirection = wishedForDirection.Normalized();
 
