@@ -4,14 +4,14 @@ public class Player: KinematicBody
 {
     float MOUSE_SENSITIVITY = 0.05F;
     float GRAVITY = -24.8F;
-    float ACCEL = 4.5F;
-    int DEACCEL = 16;
+    float ACCELERATION = 4.5F;
+    int DEACCELERATION = 16;
     int MAX_SPEED = 20;
     int JUMP_SPEED = 18;
 
     Camera camera;
     Spatial rotationBodyTop;
-    Vector3 vel = new Vector3();
+    Vector3 velocity = new Vector3();
 
 
     public override void _Ready()
@@ -23,7 +23,7 @@ public class Player: KinematicBody
 
     public override void _PhysicsProcess(float delta)
     {
-        Vector3 dir = new Vector3();
+        Vector3 wishedForDirection = new Vector3();
         Transform camXform = camera.GetGlobalTransform();
 
         Vector2 inputMovementVector = new Vector2();
@@ -47,37 +47,37 @@ public class Player: KinematicBody
 
         inputMovementVector = inputMovementVector.Normalized();
 
-        dir += -camXform.basis.z.Normalized() * inputMovementVector.y;
-        dir += camXform.basis.x.Normalized() * inputMovementVector.x;
+        wishedForDirection += -camXform.basis.z.Normalized() * inputMovementVector.y;
+        wishedForDirection += camXform.basis.x.Normalized() * inputMovementVector.x;
 
         if(IsOnFloor())
         {
             if(Input.IsActionJustPressed("movement_jump"))
             {
-                vel.y = JUMP_SPEED;
+                velocity.y = JUMP_SPEED;
             }
         }
 
-        dir.y = 0;
-        dir = dir.Normalized();
+        wishedForDirection.y = 0;
+        wishedForDirection = wishedForDirection.Normalized();
 
-        vel.y += delta * GRAVITY;
+        velocity.y += delta * GRAVITY;
 
-        Vector3 hvel = vel;
-        hvel.y = 0;
+        Vector3 horizontalVelocity = velocity;
+        horizontalVelocity.y = 0;
 
-        Vector3 target = dir * MAX_SPEED;
+        Vector3 target = wishedForDirection * MAX_SPEED;
 
-        float accel = DEACCEL;
-        if(dir.Dot(hvel) > 0)
+        float accel = DEACCELERATION;
+        if(wishedForDirection.Dot(horizontalVelocity) > 0)
         {
-            accel = ACCEL;
+            accel = ACCELERATION;
         }
 
-        hvel = hvel.LinearInterpolate(target, accel * delta);
-        vel.x = hvel.x;
-        vel.z = hvel.z;
-        vel = MoveAndSlideWithSnap(vel, new Vector3(0, 0.05F, 0), new Vector3(0, 1, 0), false, false, 4, Mathf.Deg2Rad(40));
+        horizontalVelocity = horizontalVelocity.LinearInterpolate(target, accel * delta);
+        velocity.x = horizontalVelocity.x;
+        velocity.z = horizontalVelocity.z;
+        velocity = MoveAndSlideWithSnap(velocity, new Vector3(0, 0.05F, 0), new Vector3(0, 1, 0), false, false, 4, Mathf.Deg2Rad(40));
     }
 
     public override void _Input(InputEvent @event)
