@@ -1,29 +1,76 @@
 using Godot;
+using System.Collections.Generic;
 
-public class Player: KinematicBody
+public class Player: Entity
 {
-    float MOUSE_SENSITIVITY = 0.05F;
-    float GRAVITY = -24.8F;
-    float ACCEL = 4.5F;
-    int DEACCEL = 16;
-    int MAX_SPEED = 20;
-    int JUMP_SPEED = 18;
+    static float MOUSE_SENSITIVITY = 0.05F;
+    static float GRAVITY = -24.8F;
+    static float ACCELERATION = 4.5F;
+    static int DEACCELERATION = 16;
+    static int MAX_SPEED = 20;
+    static int SPRINT_ACCEL = 18;
+    static int MAX_SPRINT_SPEED = 30;
+    static int JUMP_SPEED = 18;
+    static List<string> WEAPON_NAME = new List<string> { "UNARMED", "KNIFE", "PISTOL", "RIFLE" };
+    static Dictionary<string, int> WEAPON_NUMBER = new Dictionary<string, int>() {
+        {"UNARMED", 0}, {"KNIFE", 1}, {"PISTOL", 2}, {"RIFLE", 3}
+    };
 
     Camera camera;
     Spatial rotationBodyTop;
-    Vector3 vel = new Vector3();
+    Label UIStatus;
+    Dictionary<string, Weapon> weapons = new Dictionary<string, Weapon>() {
+        {"UNARMED", null}, {"KNIFE", null}, {"PISTOL", null}, {"RIFLE", null}
+    };
+    SpotLight flashlight;
 
+    string currentWeaponName = "UNARMED";
+    string changingWeaponName = "UNARMED";
+    bool changingWeapon = false;
+
+    Vector3 velocity = new Vector3();
+    bool isSprinting = false;
+    int health = 100;
 
     public override void _Ready()
     {
+        Input.SetMouseMode(Input.MouseMode.Captured);
+
         camera = (Camera)GetNode("Rotation_body_top/Eyes");
         rotationBodyTop = (Spatial)GetNode("Rotation_body_top");
-        Input.SetMouseMode(Input.MouseMode.Captured);
+        entityAnimation = (Player_animation)GetNode("Rotation_body_top/Model/Player_animation");
+        UIStatus = (Label)GetNode("HUD/Panel/Satus");
+        flashlight = (SpotLight)GetNode("Rotation_body_top/Flashlight");
+
+        entityAnimation.callbackFunction = GD.FuncRef(this, "Attack");
+
+        this.weapons["KNIFE"] = (Knife)GetNode("Rotation_body_top/Weapons/Knife");
+        this.weapons["PISTOL"] = (Pistol)GetNode("Rotation_body_top/Weapons/Pistol");
+        this.weapons["RIFLE"] = (Rifle)GetNode("Rotation_body_top/Weapons/Rifle");
+
+        Vector3 gunAimPos = ((Spatial)GetNode("Rotation_body_top/Weapons_aim")).GetGlobalTransform().origin;
+
+        foreach(KeyValuePair<string, Weapon> weapon in this.weapons)
+        {
+            if(weapon.Value != null)
+            {
+                weapon.Value.entityNode = this;
+                weapon.Value.LookAt(gunAimPos, new Vector3(0, 1, 0));
+                weapon.Value.RotateObjectLocal(new Vector3(0, 1, 0), Mathf.Deg2Rad(180));
+            }
+        }
     }
 
     public override void _PhysicsProcess(float delta)
     {
-        Vector3 dir = new Vector3();
+        Vector3 direction = ProcessInput(delta);
+        ProcessMovement(direction, delta);
+        ProcessChangingWeapon(delta);
+    }
+
+    Vector3 ProcessInput(float delta)
+    {
+        Vector3 direction = new Vector3();
         Transform camXform = camera.GetGlobalTransform();
 
         Vector2 inputMovementVector = new Vector2();
@@ -47,37 +94,191 @@ public class Player: KinematicBody
 
         inputMovementVector = inputMovementVector.Normalized();
 
-        dir += -camXform.basis.z.Normalized() * inputMovementVector.y;
-        dir += camXform.basis.x.Normalized() * inputMovementVector.x;
+        direction += -camXform.basis.z.Normalized() * inputMovementVector.y;
+        direction += camXform.basis.x.Normalized() * inputMovementVector.x;
+
+        if(Input.IsActionPressed("movement_sprint"))
+        {
+            isSprinting = true;
+        }
+        else
+        {
+            isSprinting = false;
+        }
 
         if(IsOnFloor())
         {
             if(Input.IsActionJustPressed("movement_jump"))
             {
-                vel.y = JUMP_SPEED;
+                velocity.y = JUMP_SPEED;
             }
         }
 
-        dir.y = 0;
-        dir = dir.Normalized();
-
-        vel.y += delta * GRAVITY;
-
-        Vector3 hvel = vel;
-        hvel.y = 0;
-
-        Vector3 target = dir * MAX_SPEED;
-
-        float accel = DEACCEL;
-        if(dir.Dot(hvel) > 0)
+        if(Input.IsActionJustPressed("flashlight"))
         {
-            accel = ACCEL;
+            if(flashlight.IsVisibleInTree())
+            {
+                flashlight.Hide();
+            }
+            else
+            {
+                flashlight.Show();
+            }
         }
 
-        hvel = hvel.LinearInterpolate(target, accel * delta);
-        vel.x = hvel.x;
-        vel.z = hvel.z;
-        vel = MoveAndSlideWithSnap(vel, new Vector3(0, 0.05F, 0), new Vector3(0, 1, 0), false, false, 4, Mathf.Deg2Rad(40));
+        return direction;
+    }
+
+    void ProcessMovement(Vector3 direction, float delta)
+    {
+        direction.y = 0;
+        direction = direction.Normalized();
+
+        velocity.y += delta * GRAVITY;
+
+        Vector3 horizontalVelocity = velocity;
+        horizontalVelocity.y = 0;
+
+        Vector3 target = direction;
+
+        if(isSprinting)
+        {
+            target *= MAX_SPRINT_SPEED;
+        }
+        else
+        {
+            target *= MAX_SPEED;
+        }
+
+        float acceleration = DEACCELERATION;
+        if(direction.Dot(horizontalVelocity) > 0)
+        {
+            if(isSprinting)
+            {
+                acceleration = SPRINT_ACCEL;
+            }
+            else
+            {
+                acceleration = ACCELERATION;
+            }
+        }
+
+        horizontalVelocity = horizontalVelocity.LinearInterpolate(target, acceleration * delta);
+        velocity.x = horizontalVelocity.x;
+        velocity.z = horizontalVelocity.z;
+        velocity = MoveAndSlideWithSnap(velocity, new Vector3(0, 0.05F, 0), new Vector3(0, 1, 0), false, false, 4, Mathf.Deg2Rad(40));
+
+        int weaponChangeNumber = WEAPON_NUMBER[currentWeaponName];
+
+        if(Input.IsKeyPressed((int)KeyList.Key1))
+        {
+            weaponChangeNumber = 0;
+        }
+        if(Input.IsKeyPressed((int)KeyList.Key2))
+        {
+            weaponChangeNumber = 1;
+        }
+        if(Input.IsKeyPressed((int)KeyList.Key3))
+        {
+            weaponChangeNumber = 2;
+        }
+        if(Input.IsKeyPressed((int)KeyList.Key4))
+        {
+            weaponChangeNumber = 3;
+        }
+
+        if(Input.IsActionJustPressed("shift_weapon_positive"))
+        {
+            GD.Print("shift_weapon_positive");
+            weaponChangeNumber += 1;
+        }
+        if(Input.IsActionJustPressed("shift_weapon_negative"))
+        {
+            GD.Print("shift_weapon_negative");
+            weaponChangeNumber -= 1;
+        }
+
+        weaponChangeNumber = Mathf.Clamp(weaponChangeNumber, 0, WEAPON_NAME.Count - 1);
+
+        if(changingWeapon == false)
+        {
+            if(WEAPON_NAME[weaponChangeNumber] != currentWeaponName)
+            {
+                changingWeaponName = WEAPON_NAME[weaponChangeNumber];
+                changingWeapon = true;
+            }
+        }
+
+        if(Input.IsActionPressed("attack"))
+        {
+            if(changingWeapon == false)
+            {
+                Weapon currentWeapon = this.weapons[currentWeaponName];
+                if(currentWeapon != null)
+                {
+                    string weaponName = currentWeapon.GetType().Name;
+
+                    if(entityAnimation.currentState == weaponName + "_idle")
+                    {
+                        entityAnimation.SetAnimation(weaponName + "_fire");
+                    }
+                }
+            }
+        }
+    }
+
+    void ProcessChangingWeapon(float delta)
+    {
+        if(changingWeapon == true)
+        {
+            Weapon currentWeapon = this.weapons[currentWeaponName];
+            bool weaponUnequipped = false;
+
+            if(currentWeapon == null)
+            {
+                weaponUnequipped = true;
+            }
+            else
+            {
+                if(currentWeapon.isWeaponEnabled == true)
+                {
+                    weaponUnequipped = currentWeapon.UnequipWeapon();
+                }
+                else
+                {
+                    weaponUnequipped = true;
+                }
+            }
+
+            if(weaponUnequipped == true)
+            {
+                Weapon weaponToEquip = this.weapons[changingWeaponName];
+                bool weaponEquiped = false;
+
+                if(weaponToEquip == null)
+                {
+                    weaponEquiped = true;
+                }
+                else
+                {
+                    if(weaponToEquip.isWeaponEnabled == false)
+                    {
+                        weaponEquiped = weaponToEquip.EquipWeapon();
+                    }
+                    else
+                    {
+                        weaponEquiped = true;
+                    }
+                }
+
+                if(weaponEquiped == true)
+                {
+                    changingWeapon = false;
+                    currentWeaponName = changingWeaponName;
+                    changingWeaponName = "";
+                }
+            }
+        }
     }
 
     public override void _Input(InputEvent @event)
@@ -88,9 +289,17 @@ public class Player: KinematicBody
             rotationBodyTop.RotateX(Mathf.Deg2Rad(mouseMotion.Relative.y * MOUSE_SENSITIVITY));
             this.RotateY(Mathf.Deg2Rad(mouseMotion.Relative.x * MOUSE_SENSITIVITY * -1));
 
-            Vector3 camera_rot = rotationBodyTop.GetRotationDegrees();
-            camera_rot.x = Mathf.Clamp(camera_rot.x, -70, 70);
-            rotationBodyTop.SetRotationDegrees(camera_rot);
+            Vector3 cameraRotation = rotationBodyTop.GetRotationDegrees();
+            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -70, 70);
+            rotationBodyTop.SetRotationDegrees(cameraRotation);
+        }
+    }
+
+    public void Attack()
+    {
+        if(changingWeapon == false)
+        {
+            this.weapons[currentWeaponName].AttackAction();
         }
     }
 }

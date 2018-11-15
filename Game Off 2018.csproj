@@ -20,6 +20,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>portable</DebugType>
@@ -50,17 +51,33 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Entity_animation.cs" />
+    <Compile Include="Entities\Ennemies\Bob\Bob.cs" />
+    <Compile Include="Entities\Ennemies\Enemy.cs" />
     <Compile Include="Entities\Player\Player.cs" />
+    <Compile Include="Entities\Player\Player_animation.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\Weapons\Knife\Knife.cs" />
+    <Compile Include="Entities\Weapons\Pistol\Pistol.cs" />
+    <Compile Include="Entities\Weapons\Rifle\Rifle.cs" />
+    <Compile Include="Entities\Weapons\Weapon.cs" />
     <Compile Include="Globals\Global.cs" />
     <Compile Include="Menus\Title\Button_play.cs" />
     <Compile Include="Menus\Title\Menu_timer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Scenes\" />
+    <Folder Include="Scenes\Common\Assets\" />
+    <Folder Include="Scenes\Common\Prefabs\" />
+    <Folder Include="Scenes\Level0\Assets\" />
+    <Folder Include="UI\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="icon.png" />
+    <None Include="Menus\Title\Assets\space.png.import" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Menus\Title\Assets\space.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
