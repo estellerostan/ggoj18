@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-public class Player: Entity
+public class Player: KinematicBody
 {
     static float MOUSE_SENSITIVITY = 0.05F;
     static float GRAVITY = -24.8F;
@@ -18,6 +18,7 @@ public class Player: Entity
 
     Camera camera;
     Spatial rotationBodyTop;
+    public Entity_animation entityAnimation;
     Label UIStatus;
     Dictionary<string, Weapon> weapons = new Dictionary<string, Weapon>() {
         {"UNARMED", null}, {"KNIFE", null}, {"PISTOL", null}, {"RIFLE", null}
@@ -44,13 +45,13 @@ public class Player: Entity
 
         entityAnimation.callbackFunction = GD.FuncRef(this, "Attack");
 
-        this.weapons["KNIFE"] = (Knife)GetNode("Rotation_body_top/Weapons/Knife");
-        this.weapons["PISTOL"] = (Pistol)GetNode("Rotation_body_top/Weapons/Pistol");
-        this.weapons["RIFLE"] = (Rifle)GetNode("Rotation_body_top/Weapons/Rifle");
+        weapons["KNIFE"] = (Knife)GetNode("Rotation_body_top/Weapons/Knife");
+        weapons["PISTOL"] = (Pistol)GetNode("Rotation_body_top/Weapons/Pistol");
+        weapons["RIFLE"] = (Rifle)GetNode("Rotation_body_top/Weapons/Rifle");
 
         Vector3 gunAimPos = ((Spatial)GetNode("Rotation_body_top/Weapons_aim")).GetGlobalTransform().origin;
 
-        foreach(KeyValuePair<string, Weapon> weapon in this.weapons)
+        foreach(KeyValuePair<string, Weapon> weapon in weapons)
         {
             if(weapon.Value != null)
             {
@@ -213,7 +214,7 @@ public class Player: Entity
         {
             if(changingWeapon == false)
             {
-                Weapon currentWeapon = this.weapons[currentWeaponName];
+                Weapon currentWeapon = weapons[currentWeaponName];
                 if(currentWeapon != null)
                 {
                     string weaponName = currentWeapon.GetType().Name;
@@ -231,7 +232,7 @@ public class Player: Entity
     {
         if(changingWeapon == true)
         {
-            Weapon currentWeapon = this.weapons[currentWeaponName];
+            Weapon currentWeapon = weapons[currentWeaponName];
             bool weaponUnequipped = false;
 
             if(currentWeapon == null)
@@ -252,7 +253,7 @@ public class Player: Entity
 
             if(weaponUnequipped == true)
             {
-                Weapon weaponToEquip = this.weapons[changingWeaponName];
+                Weapon weaponToEquip = weapons[changingWeaponName];
                 bool weaponEquiped = false;
 
                 if(weaponToEquip == null)
@@ -287,7 +288,7 @@ public class Player: Entity
         {
             InputEventMouseMotion mouseMotion = (InputEventMouseMotion)@event;
             rotationBodyTop.RotateX(Mathf.Deg2Rad(mouseMotion.Relative.y * MOUSE_SENSITIVITY));
-            this.RotateY(Mathf.Deg2Rad(mouseMotion.Relative.x * MOUSE_SENSITIVITY * -1));
+            RotateY(Mathf.Deg2Rad(mouseMotion.Relative.x * MOUSE_SENSITIVITY * -1));
 
             Vector3 cameraRotation = rotationBodyTop.GetRotationDegrees();
             cameraRotation.x = Mathf.Clamp(cameraRotation.x, -70, 70);
@@ -299,7 +300,12 @@ public class Player: Entity
     {
         if(changingWeapon == false)
         {
-            this.weapons[currentWeaponName].AttackAction();
+            weapons[currentWeaponName].AttackAction();
         }
+    }
+
+    public void AttackHit(Dictionary<string, int> damage, Transform getGlobalTransform)
+    {
+        return;
     }
 }

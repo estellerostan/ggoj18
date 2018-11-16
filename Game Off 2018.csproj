@@ -47,16 +47,16 @@
       <HintPath>$(ProjectDir)\.mono\assemblies\GodotSharpEditor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Entity_animation.cs" />
-    <Compile Include="Entities\Ennemies\Bob\Bob.cs" />
+    <Compile Include="Entities\Ennemies\Enemy1\Enemy1.cs" />
     <Compile Include="Entities\Ennemies\Enemy.cs" />
     <Compile Include="Entities\Player\Player.cs" />
     <Compile Include="Entities\Player\Player_animation.cs" />
-    <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Weapons\Knife\Knife.cs" />
     <Compile Include="Entities\Weapons\Pistol\Pistol.cs" />
     <Compile Include="Entities\Weapons\Rifle\Rifle.cs" />

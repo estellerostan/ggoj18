@@ -8,7 +8,7 @@ public class Weapon: Spatial
     };
     protected string TYPE = "firearm";
 
-    public Entity entityNode = null;
+    public dynamic entityNode = null;
 
     public bool isWeaponEnabled = false;
 
@@ -19,7 +19,6 @@ public class Weapon: Spatial
 
     public void AttackAction()
     {
-        GD.Print("Attack - TYPE: " + TYPE);
         if(TYPE == "firearm")
         {
             RayCast ray = (RayCast)GetNode("Ray_cast");
@@ -27,15 +26,15 @@ public class Weapon: Spatial
 
             if(ray.IsColliding())
             {
-                Object body = ray.GetCollider();
+                dynamic body = ray.GetCollider();
 
-                if(body == entityNode)
+                if(body == this.entityNode)
                 {
                     return;
                 }
                 else if(body.HasMethod("AttackHit"))
                 {
-                    ((Entity)body).AttackHit(DAMAGE, ray.GetGlobalTransform);
+                    body.AttackHit(DAMAGE, ray.GetGlobalTransform());
                 }
             }
         }
@@ -44,15 +43,15 @@ public class Weapon: Spatial
             Area area = (Area)GetNode("Area");
             Godot.Collections.Array bodies = area.GetOverlappingBodies();
 
-            foreach(PhysicsBody body in bodies)
+            foreach(dynamic body in bodies)
             {
-                if(body == entityNode)
+                if(body == this.entityNode)
                 {
                     continue;
                 }
                 else if(body.HasMethod("AttackHit"))
                 {
-                    ((Entity)body).AttackHit(DAMAGE, area.GetGlobalTransform);
+                    body.AttackHit(DAMAGE, area.GetTransform());
                 }
             }
         }
@@ -60,7 +59,7 @@ public class Weapon: Spatial
 
     public bool EquipWeapon()
     {
-        string weaponName = this.GetType().Name;
+        string weaponName = GetType().Name;
 
         if(entityNode.entityAnimation.currentState == weaponName + "_idle")
         {
@@ -78,14 +77,11 @@ public class Weapon: Spatial
 
     public bool UnequipWeapon()
     {
-        string weaponName = this.GetType().Name;
+        string weaponName = GetType().Name;
 
         if(entityNode.entityAnimation.currentState == weaponName + "_idle")
         {
-            if(entityNode.entityAnimation.currentState != weaponName + "_unequip")
-            {
-                entityNode.entityAnimation.SetAnimation(weaponName + "_unequip");
-            }
+            entityNode.entityAnimation.SetAnimation(weaponName + "_unequip");
         }
 
         if(entityNode.entityAnimation.currentState == "Idle_unarmed")
