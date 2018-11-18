@@ -5,11 +5,14 @@ public class Enemy: RigidBody
 {
     int BASE_BULLET_BOOST = 9;
 
-    public void AttackHit(Dictionary<string, int> damage, Transform globalTransform)
-    {
-        string bodyPart = "body"; // TODO: a faire
-        Vector3 directionVector = globalTransform.basis.z.Normalized() * BASE_BULLET_BOOST;
+    int health = 100;
 
-        ApplyImpulse((globalTransform.origin - GetGlobalTransform().origin).Normalized(), directionVector * damage[bodyPart]);
+    public void AttackHit(int damage, Transform globalTransform)
+    {
+        GD.Print("1111111");
+        Vector3 directionVector = globalTransform.basis.z.Normalized() * BASE_BULLET_BOOST;
+        GD.Print("2222222");
+        ApplyImpulse((globalTransform.origin - GetGlobalTransform().origin).Normalized(), directionVector * damage);
+        GD.Print("3333333");
     }
 }

@@ -179,7 +179,7 @@ public class Player: KinematicBody
         {
             weaponChangeNumber = 1;
         }
-        if(Input.IsKeyPressed((int)KeyList.Key3))
+        if(Input.IsKeyPressed((int)KeyList.Key3) || Input.IsActionPressed("Key3"))
         {
             weaponChangeNumber = 2;
         }
@@ -298,6 +298,7 @@ public class Player: KinematicBody
 
     public void Attack()
     {
+        GD.Print("Attack");
         if(changingWeapon == false)
         {
             weapons[currentWeaponName].AttackAction();

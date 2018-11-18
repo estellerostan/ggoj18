@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class Weapon: Spatial
 {
     protected Dictionary<string, int> DAMAGE = new Dictionary<string, int>() {
-        {"head", 0}, {"body", 0}, {"leg", 0}
+        {"head", 0}, {"body", 0}, {"legs", 0}
     };
     protected string TYPE = "firearm";
 
@@ -19,6 +19,7 @@ public class Weapon: Spatial
 
     public void AttackAction()
     {
+        GD.Print("=============");
         if(TYPE == "firearm")
         {
             RayCast ray = (RayCast)GetNode("Ray_cast");
@@ -27,14 +28,13 @@ public class Weapon: Spatial
             if(ray.IsColliding())
             {
                 dynamic body = ray.GetCollider();
-
-                if(body == this.entityNode)
+GD.Print(body.GetType().Name);
+GD.Print(body.HasMethod("AttackHit"));
+                if(body.GetType().Name != entityNode.GetType().Name && body.HasMethod("AttackHit"))
                 {
-                    return;
-                }
-                else if(body.HasMethod("AttackHit"))
-                {
-                    body.AttackHit(DAMAGE, ray.GetGlobalTransform());
+                    GD.Print("/////////");
+                    GD.Print(((Node)body).GetGroups());
+                    body.AttackHit(DAMAGE[((string)((Node)body).GetGroups()[0])], ray.GetGlobalTransform());
                 }
             }
         }
@@ -45,13 +45,9 @@ public class Weapon: Spatial
 
             foreach(dynamic body in bodies)
             {
-                if(body == this.entityNode)
+                if(body.GetType().Name != entityNode.GetType().Name && body.HasMethod("AttackHit"))
                 {
-                    continue;
-                }
-                else if(body.HasMethod("AttackHit"))
-                {
-                    body.AttackHit(DAMAGE, area.GetTransform());
+                    body.AttackHit(DAMAGE[((string)((Node)body).GetGroups()[0])], area.GetTransform());
                 }
             }
         }
