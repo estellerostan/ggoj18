@@ -71,14 +71,30 @@
     <Folder Include="Scenes\Common\Assets\" />
     <Folder Include="Scenes\Common\Prefabs\" />
     <Folder Include="Scenes\Level0\Assets\" />
-    <Folder Include="UI\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="icon.png" />
     <None Include="Menus\Title\Assets\space.png.import" />
+    <None Include="UI\Assets\Crosshair\Base.png.import" />
+    <None Include="UI\Assets\Crosshair\Knife_fire.png.import" />
+    <None Include="UI\Assets\Crosshair\Knife_hit.png.import" />
+    <None Include="UI\Assets\Crosshair\Knife_idle.png.import" />
+    <None Include="UI\Assets\Crosshair\Pistol_fire.png.import" />
+    <None Include="UI\Assets\Crosshair\Pistol_hit.png.import" />
+    <None Include="UI\Assets\Crosshair\Pistol_idle.png.import" />
+    <None Include="UI\Assets\Crosshair\Rifle_fire.png.import" />
+    <None Include="UI\Assets\Crosshair\Rifle_hit.png.import" />
+    <None Include="UI\Assets\Crosshair\Rifle_idle.png.import" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Menus\Title\Assets\space.png" />
+    <Content Include="UI\Assets\Crosshair\Base.png" />
+    <Content Include="UI\Assets\Crosshair\Knife_hit.png" />
+    <Content Include="UI\Assets\Crosshair\Knife_idle.png" />
+    <Content Include="UI\Assets\Crosshair\Pistol_hit.png" />
+    <Content Include="UI\Assets\Crosshair\Pistol_idle.png" />
+    <Content Include="UI\Assets\Crosshair\Rifle_hit.png" />
+    <Content Include="UI\Assets\Crosshair\Rifle_idle.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

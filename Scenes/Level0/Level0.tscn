@@ -217,6 +217,7 @@ _sections_unfolded = [ "Omni", "Transform" ]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
 
 [node name="Spatial" type="Spatial" parent="."]
+editor/display_folded = true
 
 [node name="Enemy1" type="RigidBody" parent="Spatial"]
 editor/display_folded = true
@@ -331,7 +332,7 @@ disabled = false
 
 [node name="wall3" type="MeshInstance" parent="Room"]
 editor/display_folded = true
-transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -50, 0, 50 )
+transform = Transform( -4.37114e-008, 0, 1, 0, 1, 0, -1, 0, -4.37114e-008, -50, 0, 50 )
 layers = 1
 material_override = null
 cast_shadow = 1
@@ -361,7 +362,7 @@ disabled = false
 
 [node name="wall4" type="MeshInstance" parent="Room"]
 editor/display_folded = true
-transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 50, 0, 50 )
+transform = Transform( -4.37114e-008, 0, -1, 0, 1, 0, 1, 0, -4.37114e-008, 50, 0, 50 )
 layers = 1
 material_override = null
 cast_shadow = 1
