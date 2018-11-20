@@ -219,6 +219,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
 [node name="Spatial" type="Spatial" parent="."]
 
 [node name="Enemy1" type="RigidBody" parent="Spatial"]
+editor/display_folded = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.16252, 6.52182 )
 input_ray_pickable = true
 input_capture_on_drag = false
@@ -266,6 +267,7 @@ skeleton = NodePath("..")
 material/0 = null
 
 [node name="Room" type="Spatial" parent="."]
+editor/display_folded = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -50 )
 
 [node name="wall1" type="MeshInstance" parent="Room"]

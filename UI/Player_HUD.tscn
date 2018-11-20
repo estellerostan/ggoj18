@@ -1,4 +1,13 @@
-[gd_scene format=2]
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://UI/Crosshairs.cs" type="Script" id=1]
+[ext_resource path="res://UI/Assets/Crosshair/Base.png" type="Texture" id=2]
+[ext_resource path="res://UI/Assets/Crosshair/Knife_idle.png" type="Texture" id=3]
+[ext_resource path="res://UI/Assets/Crosshair/Knife_hit.png" type="Texture" id=4]
+[ext_resource path="res://UI/Assets/Crosshair/Pistol_idle.png" type="Texture" id=5]
+[ext_resource path="res://UI/Assets/Crosshair/Pistol_hit.png" type="Texture" id=6]
+[ext_resource path="res://UI/Assets/Crosshair/Rifle_idle.png" type="Texture" id=7]
+[ext_resource path="res://UI/Assets/Crosshair/Rifle_hit.png" type="Texture" id=8]
 
 [node name="HUD" type="Control"]
 anchor_left = 0.0
@@ -12,100 +21,156 @@ mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 
-[node name="Crosshair" type="Control" parent="."]
-modulate = Color( 1, 1, 1, 0.705882 )
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -21.0
-margin_top = -21.0
-margin_right = 21.0
-margin_bottom = 21.0
+[node name="Crosshairs" type="Control" parent="."]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 928.0
+margin_top = 508.0
+margin_right = 992.0
+margin_bottom = 572.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-
-[node name="Bottom_IMG" type="TextureRect" parent="Crosshair"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -2.5
-margin_top = 4.5
-margin_right = 2.5
-margin_bottom = 20.5
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-mouse_filter = 1
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-expand = true
-stretch_mode = 0
-_sections_unfolded = [ "Visibility" ]
-
-[node name="Top_IMG" type="TextureRect" parent="Crosshair"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -2.5
-margin_top = -20.5
-margin_right = 2.5
-margin_bottom = -4.5
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-mouse_filter = 1
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-expand = true
-stretch_mode = 0
+script = ExtResource( 1 )
 _sections_unfolded = [ "Rect" ]
 
-[node name="Left_IMG" type="TextureRect" parent="Crosshair"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -4.5
-margin_top = -2.5
-margin_right = 0.5
-margin_bottom = 12.5
-rect_rotation = 90.0
+[node name="Base" type="TextureRect" parent="Crosshairs"]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 128.0
+margin_bottom = 128.0
+rect_scale = Vector2( 0.5, 0.5 )
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 1
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-expand = true
-stretch_mode = 0
-_sections_unfolded = [ "Rect" ]
+texture = ExtResource( 2 )
+stretch_mode = 6
+_sections_unfolded = [ "Rect", "texture" ]
 
-[node name="Right_IMG" type="TextureRect" parent="Crosshair"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = 19.5
-margin_top = -2.5
-margin_right = 24.5
-margin_bottom = 12.5
-rect_rotation = 90.0
+[node name="Knife_idle" type="TextureRect" parent="Crosshairs"]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 128.0
+margin_bottom = 128.0
+rect_scale = Vector2( 0.5, 0.5 )
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 1
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-expand = true
-stretch_mode = 0
-_sections_unfolded = [ "Rect" ]
+texture = ExtResource( 3 )
+stretch_mode = 6
+_sections_unfolded = [ "Rect", "texture" ]
+
+[node name="Knife_hit" type="TextureRect" parent="Crosshairs"]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 128.0
+margin_bottom = 128.0
+rect_scale = Vector2( 0.5, 0.5 )
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+texture = ExtResource( 4 )
+stretch_mode = 6
+_sections_unfolded = [ "Rect", "texture" ]
+
+[node name="Pistol_idle" type="TextureRect" parent="Crosshairs"]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 42.0
+margin_bottom = 42.0
+rect_scale = Vector2( 0.5, 0.5 )
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+texture = ExtResource( 5 )
+stretch_mode = 6
+_sections_unfolded = [ "Rect", "texture" ]
+
+[node name="Pistol_hit" type="TextureRect" parent="Crosshairs"]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 42.0
+margin_bottom = 42.0
+rect_scale = Vector2( 0.5, 0.5 )
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+texture = ExtResource( 6 )
+stretch_mode = 6
+_sections_unfolded = [ "Rect", "texture" ]
+
+[node name="Rifle_idle" type="TextureRect" parent="Crosshairs"]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 42.0
+margin_bottom = 42.0
+rect_scale = Vector2( 0.5, 0.5 )
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+texture = ExtResource( 7 )
+stretch_mode = 6
+_sections_unfolded = [ "Rect", "texture" ]
+
+[node name="Rifle_hit" type="TextureRect" parent="Crosshairs"]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 42.0
+margin_bottom = 42.0
+rect_scale = Vector2( 0.5, 0.5 )
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+texture = ExtResource( 8 )
+stretch_mode = 6
+_sections_unfolded = [ "Rect", "texture" ]
 
 [node name="Panel" type="Panel" parent="."]
 modulate = Color( 1, 1, 1, 0.705882 )

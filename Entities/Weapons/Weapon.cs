@@ -8,12 +8,14 @@ public class Weapon: Spatial
     };
     protected string TYPE = "firearm";
 
+    Crosshairs crosshairs;
     public dynamic entityNode = null;
 
     public bool isWeaponEnabled = false;
 
     public override void _Ready()
     {
+        crosshairs = (Crosshairs)GetNode("../../../HUD/Crosshairs");
         return;
     }
 
@@ -34,6 +36,8 @@ GD.Print(body.HasMethod("AttackHit"));
                 {
                     GD.Print("/////////");
                     GD.Print(((Node)body).GetGroups());
+
+                    crosshairs.ShowCrosshair(this.GetType().Name + "_hit");
                     body.AttackHit(DAMAGE[((string)((Node)body).GetGroups()[0])], ray.GetGlobalTransform());
                 }
             }
@@ -47,10 +51,13 @@ GD.Print(body.HasMethod("AttackHit"));
             {
                 if(body.GetType().Name != entityNode.GetType().Name && body.HasMethod("AttackHit"))
                 {
+                    crosshairs.ShowCrosshair(this.GetType().Name + "_hit");
                     body.AttackHit(DAMAGE[((string)((Node)body).GetGroups()[0])], area.GetTransform());
                 }
             }
         }
+
+        crosshairs.HideCrosshair(this.GetType().Name + "_hit");
     }
 
     public bool EquipWeapon()
@@ -66,6 +73,7 @@ GD.Print(body.HasMethod("AttackHit"));
         if(entityNode.entityAnimation.currentState == "Idle_unarmed")
         {
             entityNode.entityAnimation.SetAnimation(weaponName + "_equip");
+            crosshairs.ChangeCrosshair(weaponName + "_idle");
         }
 
         return false;
@@ -78,6 +86,7 @@ GD.Print(body.HasMethod("AttackHit"));
         if(entityNode.entityAnimation.currentState == weaponName + "_idle")
         {
             entityNode.entityAnimation.SetAnimation(weaponName + "_unequip");
+            crosshairs.HideAll();
         }
 
         if(entityNode.entityAnimation.currentState == "Idle_unarmed")
