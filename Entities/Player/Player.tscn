@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://Entities/Player/Player.cs" type="Script" id=1]
 [ext_resource path="res://Entities/Player/Player_animation.cs" type="Script" id=2]
@@ -4073,78 +4073,7 @@ tracks/34/keys = PoolRealArray( 0, 1, 1.01328e-006, -7.3202e-007, -4.39584e-007,
 margin = 0.04
 extents = Vector3( 0.45, 0.45, 0.45 )
 
-[sub_resource type="SpatialMaterial" id=22]
-
-render_priority = 0
-flags_transparent = false
-flags_unshaded = false
-flags_vertex_lighting = false
-flags_no_depth_test = false
-flags_use_point_size = false
-flags_world_triplanar = false
-flags_fixed_size = false
-flags_albedo_tex_force_srgb = false
-flags_do_not_receive_shadows = false
-flags_disable_ambient_light = false
-flags_ensure_correct_normals = false
-vertex_color_use_as_albedo = false
-vertex_color_is_srgb = false
-params_diffuse_mode = 0
-params_specular_mode = 0
-params_blend_mode = 0
-params_cull_mode = 0
-params_depth_draw_mode = 0
-params_line_width = 1.0
-params_point_size = 1.0
-params_billboard_mode = 0
-params_billboard_keep_scale = false
-params_grow = false
-params_use_alpha_scissor = false
-albedo_color = Color( 1, 1, 1, 0 )
-metallic = 0.0
-metallic_specular = 0.5
-metallic_texture_channel = 0
-roughness = 0.0
-roughness_texture_channel = 0
-emission_enabled = true
-emission = Color( 1, 0, 0, 1 )
-emission_energy = 16.0
-emission_operator = 0
-emission_on_uv2 = false
-normal_enabled = false
-rim_enabled = false
-clearcoat_enabled = false
-anisotropy_enabled = false
-ao_enabled = false
-depth_enabled = false
-subsurf_scatter_enabled = false
-transmission_enabled = false
-refraction_enabled = false
-detail_enabled = false
-uv1_scale = Vector3( 1, 1, 1 )
-uv1_offset = Vector3( 0, 0, 0 )
-uv1_triplanar = false
-uv1_triplanar_sharpness = 1.0
-uv2_scale = Vector3( 1, 1, 1 )
-uv2_offset = Vector3( 0, 0, 0 )
-uv2_triplanar = false
-uv2_triplanar_sharpness = 1.0
-proximity_fade_enable = false
-distance_fade_mode = 0
-_sections_unfolded = [ "Emission", "Parameters" ]
-
-[sub_resource type="CylinderMesh" id=23]
-
-material = SubResource( 22 )
-custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
-flip_faces = false
-top_radius = 0.01
-bottom_radius = 0.01
-height = 80.0
-radial_segments = 4
-rings = 1
-
-[sub_resource type="SphereMesh" id=24]
+[sub_resource type="SphereMesh" id=27]
 
 custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
 flip_faces = false
@@ -4207,6 +4136,7 @@ far = 180.0
 _sections_unfolded = [ "Transform" ]
 
 [node name="Model" type="Spatial" parent="Rotation_body_top"]
+editor/display_folded = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.4, 0 )
 _sections_unfolded = [ "Transform" ]
 
@@ -4471,6 +4401,7 @@ disabled = false
 _sections_unfolded = [ "Transform", "shape" ]
 
 [node name="Pistol" type="Spatial" parent="Rotation_body_top/Weapons"]
+editor/display_folded = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, 1.2 )
 script = ExtResource( 4 )
 _sections_unfolded = [ "Transform" ]
@@ -4483,23 +4414,8 @@ collision_mask = 1
 collide_with_areas = false
 collide_with_bodies = true
 
-[node name="DebugLine" type="MeshInstance" parent="Rotation_body_top/Weapons/Pistol/Ray_cast"]
-transform = Transform( 1, 0, 0, 0, -1.62921e-007, -1, 0, 1, -1.62921e-007, 0, 0, 40 )
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = SubResource( 23 )
-skeleton = NodePath("..")
-material/0 = null
-_sections_unfolded = [ "Transform", "mesh" ]
-
 [node name="Rifle" type="Spatial" parent="Rotation_body_top/Weapons"]
+editor/display_folded = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 11.8, 1 )
 script = ExtResource( 5 )
 _sections_unfolded = [ "Transform" ]
@@ -4511,28 +4427,6 @@ cast_to = Vector3( 0, 0, 80 )
 collision_mask = 1
 collide_with_areas = false
 collide_with_bodies = true
-_sections_unfolded = [ "Transform" ]
-
-[node name="Weapons_aim" type="Spatial" parent="Rotation_body_top"]
-editor/display_folded = true
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.57628e-007, 4 )
-_sections_unfolded = [ "Transform" ]
-
-[node name="Mesh" type="MeshInstance" parent="Rotation_body_top/Weapons_aim"]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
-visible = false
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = SubResource( 24 )
-skeleton = NodePath("..")
-material/0 = null
 _sections_unfolded = [ "Transform" ]
 
 [node name="Flashlight" type="SpotLight" parent="Rotation_body_top"]
@@ -4556,6 +4450,28 @@ spot_range = 30.0
 spot_attenuation = 5.09824
 spot_angle = 50.0
 spot_angle_attenuation = 1.0
+_sections_unfolded = [ "Transform" ]
+
+[node name="Weapons_aim" type="Spatial" parent="Rotation_body_top"]
+editor/display_folded = true
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="MeshInstance" type="MeshInstance" parent="Rotation_body_top/Weapons_aim"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+visible = false
+layers = 1
+material_override = null
+cast_shadow = 1
+extra_cull_margin = 0.0
+use_in_baked_light = false
+lod_min_distance = 0.0
+lod_min_hysteresis = 0.0
+lod_max_distance = 0.0
+lod_max_hysteresis = 0.0
+mesh = SubResource( 27 )
+skeleton = NodePath("..")
+material/0 = null
 _sections_unfolded = [ "Transform" ]
 
 [node name="Body" type="CollisionShape" parent="." groups=[

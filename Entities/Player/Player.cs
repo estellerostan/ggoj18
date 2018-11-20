@@ -298,7 +298,6 @@ public class Player: KinematicBody
 
     public void Attack()
     {
-        GD.Print("Attack");
         if(changingWeapon == false)
         {
             weapons[currentWeaponName].AttackAction();

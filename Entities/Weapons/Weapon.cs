@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Weapon: Spatial
 {
-    protected Dictionary<string, int> DAMAGE = new Dictionary<string, int>() {
+    public Dictionary<string, int> DAMAGE = new Dictionary<string, int>() {
         {"head", 0}, {"body", 0}, {"legs", 0}
     };
     protected string TYPE = "firearm";
@@ -12,16 +12,31 @@ public class Weapon: Spatial
     public dynamic entityNode = null;
 
     public bool isWeaponEnabled = false;
+    float crosshairTimer = -1;
 
     public override void _Ready()
     {
         crosshairs = (Crosshairs)GetNode("../../../HUD/Crosshairs");
-        return;
+    }
+
+    public override void _Process(float delta)
+    {
+        if(crosshairTimer > -1)
+        {
+            if(crosshairTimer < 1)
+            {
+                crosshairTimer += delta;
+            }
+            else
+            {
+                crosshairTimer = -1;
+                crosshairs.HideCrosshair(GetType().Name + "_hit");
+            }
+        }
     }
 
     public void AttackAction()
     {
-        GD.Print("=============");
         if(TYPE == "firearm")
         {
             RayCast ray = (RayCast)GetNode("Ray_cast");
@@ -30,15 +45,16 @@ public class Weapon: Spatial
             if(ray.IsColliding())
             {
                 dynamic body = ray.GetCollider();
-GD.Print(body.GetType().Name);
-GD.Print(body.HasMethod("AttackHit"));
+
                 if(body.GetType().Name != entityNode.GetType().Name && body.HasMethod("AttackHit"))
                 {
-                    GD.Print("/////////");
-                    GD.Print(((Node)body).GetGroups());
+                    Godot.Collections.Array targetGroups = body.GetChild(ray.GetColliderShape()).GetGroups();
 
-                    crosshairs.ShowCrosshair(this.GetType().Name + "_hit");
-                    body.AttackHit(DAMAGE[((string)((Node)body).GetGroups()[0])], ray.GetGlobalTransform());
+                    if(targetGroups.Count > 0)
+                    {
+                        crosshairs.ShowCrosshair(GetType().Name + "_hit");
+                        body.AttackHit(DAMAGE[(string)targetGroups[0]], ray.GetGlobalTransform());
+                    }
                 }
             }
         }
@@ -51,13 +67,18 @@ GD.Print(body.HasMethod("AttackHit"));
             {
                 if(body.GetType().Name != entityNode.GetType().Name && body.HasMethod("AttackHit"))
                 {
-                    crosshairs.ShowCrosshair(this.GetType().Name + "_hit");
-                    body.AttackHit(DAMAGE[((string)((Node)body).GetGroups()[0])], area.GetTransform());
+                    Godot.Collections.Array targetGroups = body.GetGroups(); // TODO: shape ?
+
+                    if(targetGroups.Count > 0)
+                    {
+                        crosshairs.ShowCrosshair(GetType().Name + "_hit");
+                        body.AttackHit(DAMAGE[(string)targetGroups[0]], area.GetGlobalTransform());
+                    }
                 }
             }
         }
 
-        crosshairs.HideCrosshair(this.GetType().Name + "_hit");
+        crosshairTimer = 0;
     }
 
     public bool EquipWeapon()

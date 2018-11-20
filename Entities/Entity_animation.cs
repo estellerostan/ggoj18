@@ -121,7 +121,6 @@ public class Entity_animation: AnimationPlayer
         }
         else
         {
-            GD.Print("callfunc");
             callbackFunction.CallFunc();
         }
     }

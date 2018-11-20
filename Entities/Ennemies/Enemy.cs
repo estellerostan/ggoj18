@@ -1,5 +1,4 @@
 using Godot;
-using System.Collections.Generic;
 
 public class Enemy: RigidBody
 {
@@ -9,10 +8,15 @@ public class Enemy: RigidBody
 
     public void AttackHit(int damage, Transform globalTransform)
     {
-        GD.Print("1111111");
         Vector3 directionVector = globalTransform.basis.z.Normalized() * BASE_BULLET_BOOST;
-        GD.Print("2222222");
         ApplyImpulse((globalTransform.origin - GetGlobalTransform().origin).Normalized(), directionVector * damage);
-        GD.Print("3333333");
+
+        health -= damage;
+        GD.Print("health: " + health);
+
+        if(health <= 0)
+        {
+            QueueFree();
+        }
     }
 }
