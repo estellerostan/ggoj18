@@ -4073,7 +4073,7 @@ tracks/34/keys = PoolRealArray( 0, 1, 1.01328e-006, -7.3202e-007, -4.39584e-007,
 margin = 0.04
 extents = Vector3( 0.45, 0.45, 0.45 )
 
-[sub_resource type="SphereMesh" id=27]
+[sub_resource type="SphereMesh" id=22]
 
 custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
 flip_faces = false
@@ -4083,13 +4083,13 @@ radial_segments = 64
 rings = 32
 is_hemisphere = false
 
-[sub_resource type="CapsuleShape" id=25]
+[sub_resource type="CapsuleShape" id=23]
 
 margin = 0.04
 radius = 0.25
 height = 0.5
 
-[sub_resource type="CylinderShape" id=26]
+[sub_resource type="CylinderShape" id=24]
 
 margin = 0.04
 radius = 0.1
@@ -4120,7 +4120,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Eyes" type="Camera" parent="Rotation_body_top"]
-transform = Transform( -1, 0, -8.74228e-008, 0, 1, 0, 8.74228e-008, 0, -1, 0, 0, 0 )
+transform = Transform( -1, 0, -8.74228e-008, 0, 1, 0, 8.74228e-008, 0, -1, 0, 0, 0.199629 )
 keep_aspect = 1
 cull_mask = 1048575
 environment = null
@@ -4433,8 +4433,8 @@ _sections_unfolded = [ "Transform" ]
 transform = Transform( -0.999848, 0, -0.0174525, 0, 1, 0, 0.0174525, 0, -0.999848, -0.3, -0.6, 1 )
 visible = false
 layers = 1
-light_color = Color( 0.980392, 0.878431, 0.572549, 1 )
-light_energy = 0.5
+light_color = Color( 1, 1, 1, 1 )
+light_energy = 1.0
 light_indirect_energy = 1.0
 light_negative = false
 light_specular = 0.5
@@ -4446,15 +4446,15 @@ shadow_bias = 0.15
 shadow_contact = 0.0
 shadow_reverse_cull_face = false
 editor_only = false
-spot_range = 30.0
-spot_attenuation = 5.09824
-spot_angle = 50.0
+spot_range = 80.0
+spot_attenuation = 12.9959
+spot_angle = 30.0
 spot_angle_attenuation = 1.0
-_sections_unfolded = [ "Transform" ]
+_sections_unfolded = [ "Light", "Spot", "Transform" ]
 
 [node name="Weapons_aim" type="Spatial" parent="Rotation_body_top"]
 editor/display_folded = true
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="MeshInstance" type="MeshInstance" parent="Rotation_body_top/Weapons_aim"]
@@ -4469,16 +4469,16 @@ lod_min_distance = 0.0
 lod_min_hysteresis = 0.0
 lod_max_distance = 0.0
 lod_max_hysteresis = 0.0
-mesh = SubResource( 27 )
+mesh = SubResource( 22 )
 skeleton = NodePath("..")
 material/0 = null
-_sections_unfolded = [ "Transform" ]
+_sections_unfolded = [ "Transform", "mesh" ]
 
 [node name="Body" type="CollisionShape" parent="." groups=[
 "body",
 ]]
 transform = Transform( 1, 0, 0, 0, -4.37114e-008, -1, 0, 1, -4.37114e-008, 0, 1.45, 0 )
-shape = SubResource( 25 )
+shape = SubResource( 23 )
 disabled = false
 _sections_unfolded = [ "Matrix", "Transform" ]
 
@@ -4486,7 +4486,7 @@ _sections_unfolded = [ "Matrix", "Transform" ]
 "legs",
 ]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.6, 0 )
-shape = SubResource( 26 )
+shape = SubResource( 24 )
 disabled = false
 _sections_unfolded = [ "Matrix", "Transform" ]
 
@@ -4494,7 +4494,7 @@ _sections_unfolded = [ "Matrix", "Transform" ]
 "legs",
 ]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.6, 0 )
-shape = SubResource( 26 )
+shape = SubResource( 24 )
 disabled = false
 _sections_unfolded = [ "Matrix", "Transform" ]
 

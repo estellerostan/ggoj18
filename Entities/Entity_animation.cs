@@ -29,7 +29,7 @@ public class Entity_animation: AnimationPlayer
                 if(STATES[currentState].Contains(animationName))
                 {
                     currentState = animationName;
-                    this.Play(animationName, -1, ANIMATION_SPEED[animationName]);
+                    Play(animationName, -1, ANIMATION_SPEED[animationName]);
                     return true;
                 }
                 else
@@ -41,7 +41,7 @@ public class Entity_animation: AnimationPlayer
             else
             {
                 currentState = animationName;
-                this.Play(animationName, -1, ANIMATION_SPEED[animationName]);
+                Play(animationName, -1, ANIMATION_SPEED[animationName]);
                 return true;
             }
         }

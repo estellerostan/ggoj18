@@ -65,6 +65,7 @@
     <Compile Include="Menus\Title\Button_play.cs" />
     <Compile Include="Menus\Title\Menu_timer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenes\Common\AudioPlayer.cs" />
     <Compile Include="UI\Crosshairs.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +88,8 @@
     <None Include="UI\Assets\Crosshair\Rifle_idle.png.import" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Entities\Ennemies\Enemy1\Assets\head.png" />
+    <Content Include="Entities\Weapons\Pistol\Assets\Pistol_fire.wav" />
     <Content Include="Menus\Title\Assets\space.png" />
     <Content Include="UI\Assets\Crosshair\Base.png" />
     <Content Include="UI\Assets\Crosshair\Knife_hit.png" />

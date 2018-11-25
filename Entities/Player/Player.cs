@@ -16,6 +16,7 @@ public class Player: KinematicBody
         {"UNARMED", 0}, {"KNIFE", 1}, {"PISTOL", 2}, {"RIFLE", 3}
     };
 
+    PackedScene audioPlayer = (PackedScene)GD.Load("res://Scenes/Common/AudioPlayer.tscn");
     Camera camera;
     Spatial rotationBodyTop;
     public Entity_animation entityAnimation;
@@ -28,6 +29,7 @@ public class Player: KinematicBody
     string currentWeaponName = "UNARMED";
     string changingWeaponName = "UNARMED";
     bool changingWeapon = false;
+    bool reloadingWeapon = false;
 
     Vector3 velocity = new Vector3();
     bool isSprinting = false;
@@ -62,14 +64,40 @@ public class Player: KinematicBody
         }
     }
 
-    public override void _PhysicsProcess(float delta)
+    public override void _Input(InputEvent @event)
     {
-        Vector3 direction = ProcessInput(delta);
-        ProcessMovement(direction, delta);
-        ProcessChangingWeapon(delta);
+        if(@event is InputEventMouseMotion && Input.GetMouseMode() == Input.MouseMode.Captured)
+        {
+            InputEventMouseMotion mouseMotion = (InputEventMouseMotion)@event;
+            rotationBodyTop.RotateX(Mathf.Deg2Rad(mouseMotion.Relative.y * MOUSE_SENSITIVITY));
+            RotateY(Mathf.Deg2Rad(mouseMotion.Relative.x * MOUSE_SENSITIVITY * -1));
+
+            Vector3 cameraRotation = rotationBodyTop.GetRotationDegrees();
+            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -70, 70);
+            rotationBodyTop.SetRotationDegrees(cameraRotation);
+        }
     }
 
-    Vector3 ProcessInput(float delta)
+    public override void _PhysicsProcess(float delta)
+    {
+        Vector3 direction = ProcessInput();
+        ProcessMovement(direction, delta);
+
+        ProcessChangingWeapon();
+        ProcessReloading();
+
+        ProcessUI();
+    }
+
+    public void CreateSound(string soundName)
+    {
+        AudioPlayer audioClone = (AudioPlayer)audioPlayer.Instance();
+        Node sceneRoot = (Node)GetTree().GetRoot().GetChildren()[0];
+        sceneRoot.AddChild(audioClone);
+        audioClone.PlaySound(soundName);
+    }
+
+    Vector3 ProcessInput()
     {
         Vector3 direction = new Vector3();
         Transform camXform = camera.GetGlobalTransform();
@@ -107,11 +135,67 @@ public class Player: KinematicBody
             isSprinting = false;
         }
 
-        if(IsOnFloor())
+        if(IsOnFloor() && Input.IsActionJustPressed("movement_jump"))
         {
-            if(Input.IsActionJustPressed("movement_jump"))
+            velocity.y = JUMP_SPEED;
+        }
+
+        int weaponChangeNumber = WEAPON_NUMBER[currentWeaponName];
+
+        if(Input.IsKeyPressed((int)KeyList.Key1) || Input.IsActionPressed("Key1"))
+        {
+            weaponChangeNumber = 0;
+        }
+        if(Input.IsKeyPressed((int)KeyList.Key2) || Input.IsActionPressed("Key2"))
+        {
+            weaponChangeNumber = 1;
+        }
+        if(Input.IsKeyPressed((int)KeyList.Key3) || Input.IsActionPressed("Key3"))
+        {
+            weaponChangeNumber = 2;
+        }
+        if(Input.IsKeyPressed((int)KeyList.Key4) || Input.IsActionPressed("Key4"))
+        {
+            weaponChangeNumber = 3;
+        }
+
+        if(Input.IsActionJustPressed("shift_weapon_positive"))
+        {
+            weaponChangeNumber += 1;
+        }
+        if(Input.IsActionJustPressed("shift_weapon_negative"))
+        {
+            weaponChangeNumber -= 1;
+        }
+
+        weaponChangeNumber = Mathf.Clamp(weaponChangeNumber, 0, WEAPON_NAME.Count - 1);
+
+        if(changingWeapon == false && reloadingWeapon == false && WEAPON_NAME[weaponChangeNumber] != currentWeaponName)
+        {
+            changingWeaponName = WEAPON_NAME[weaponChangeNumber];
+            changingWeapon = true;
+        }
+
+        if(Input.IsActionPressed("attack") && reloadingWeapon == false && changingWeapon == false)
+        {
+            Weapon currentWeapon = weapons[currentWeaponName];
+            if(currentWeapon != null && currentWeapon.loadedAmmo > 0)
             {
-                velocity.y = JUMP_SPEED;
+                string weaponName = currentWeapon.GetType().Name;
+
+                if(entityAnimation.currentState == weaponName + "_idle")
+                {
+                    entityAnimation.SetAnimation(weaponName + "_fire");
+                }
+            }
+        }
+
+        if(Input.IsActionJustPressed("reload") && reloadingWeapon == false && changingWeapon == false)
+        {
+            Weapon currentWeapon = weapons[currentWeaponName];
+            if(currentWeapon != null && currentWeapon.canReload == true && entityAnimation.currentState != currentWeapon.GetType().Name + "_reload")
+            {
+                reloadingWeapon = true;
             }
         }
 
@@ -168,67 +252,9 @@ public class Player: KinematicBody
         velocity.x = horizontalVelocity.x;
         velocity.z = horizontalVelocity.z;
         velocity = MoveAndSlideWithSnap(velocity, new Vector3(0, 0.05F, 0), new Vector3(0, 1, 0), false, false, 4, Mathf.Deg2Rad(40));
-
-        int weaponChangeNumber = WEAPON_NUMBER[currentWeaponName];
-
-        if(Input.IsKeyPressed((int)KeyList.Key1))
-        {
-            weaponChangeNumber = 0;
-        }
-        if(Input.IsKeyPressed((int)KeyList.Key2))
-        {
-            weaponChangeNumber = 1;
-        }
-        if(Input.IsKeyPressed((int)KeyList.Key3) || Input.IsActionPressed("Key3"))
-        {
-            weaponChangeNumber = 2;
-        }
-        if(Input.IsKeyPressed((int)KeyList.Key4))
-        {
-            weaponChangeNumber = 3;
-        }
-
-        if(Input.IsActionJustPressed("shift_weapon_positive"))
-        {
-            GD.Print("shift_weapon_positive");
-            weaponChangeNumber += 1;
-        }
-        if(Input.IsActionJustPressed("shift_weapon_negative"))
-        {
-            GD.Print("shift_weapon_negative");
-            weaponChangeNumber -= 1;
-        }
-
-        weaponChangeNumber = Mathf.Clamp(weaponChangeNumber, 0, WEAPON_NAME.Count - 1);
-
-        if(changingWeapon == false)
-        {
-            if(WEAPON_NAME[weaponChangeNumber] != currentWeaponName)
-            {
-                changingWeaponName = WEAPON_NAME[weaponChangeNumber];
-                changingWeapon = true;
-            }
-        }
-
-        if(Input.IsActionPressed("attack"))
-        {
-            if(changingWeapon == false)
-            {
-                Weapon currentWeapon = weapons[currentWeaponName];
-                if(currentWeapon != null)
-                {
-                    string weaponName = currentWeapon.GetType().Name;
-
-                    if(entityAnimation.currentState == weaponName + "_idle")
-                    {
-                        entityAnimation.SetAnimation(weaponName + "_fire");
-                    }
-                }
-            }
-        }
     }
 
-    void ProcessChangingWeapon(float delta)
+    void ProcessChangingWeapon()
     {
         if(changingWeapon == true)
         {
@@ -282,17 +308,29 @@ public class Player: KinematicBody
         }
     }
 
-    public override void _Input(InputEvent @event)
+    void ProcessReloading()
     {
-        if(@event is InputEventMouseMotion && Input.GetMouseMode() == Input.MouseMode.Captured)
+        if(reloadingWeapon == true)
         {
-            InputEventMouseMotion mouseMotion = (InputEventMouseMotion)@event;
-            rotationBodyTop.RotateX(Mathf.Deg2Rad(mouseMotion.Relative.y * MOUSE_SENSITIVITY));
-            RotateY(Mathf.Deg2Rad(mouseMotion.Relative.x * MOUSE_SENSITIVITY * -1));
+            Weapon currentWeapon = weapons[currentWeaponName];
+            if(currentWeapon != null)
+            {
+                currentWeapon.ReloadWeapon();
+            }
+            reloadingWeapon = false;
+        }
+    }
 
-            Vector3 cameraRotation = rotationBodyTop.GetRotationDegrees();
-            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -70, 70);
-            rotationBodyTop.SetRotationDegrees(cameraRotation);
+    void ProcessUI()
+    {
+        Weapon currentWeapon = weapons[currentWeaponName];
+        if(currentWeapon == null || currentWeapon.TYPE == "melee")
+        {
+            UIStatus.SetText("HEALTH: " + health);
+        }
+        else
+        {
+            UIStatus.SetText("HEALTH: " + health + "\nAMMO: " + currentWeapon.loadedAmmo + "/" + currentWeapon.spareAmmo);
         }
     }
 

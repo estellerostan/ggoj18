@@ -3,20 +3,27 @@ using System.Collections.Generic;
 
 public class Weapon: Spatial
 {
-    public Dictionary<string, int> DAMAGE = new Dictionary<string, int>() {
+    protected Dictionary<string, int> DAMAGE = new Dictionary<string, int>() {
         {"head", 0}, {"body", 0}, {"legs", 0}
     };
-    protected string TYPE = "firearm";
+    public string TYPE = "melee";
+    protected int MAX_AMMO = 0;
 
     Crosshairs crosshairs;
     public dynamic entityNode = null;
 
     public bool isWeaponEnabled = false;
+    public bool canReload = true;
+    public int loadedAmmo = 0;
+    public int spareAmmo = 200;
     float crosshairTimer = -1;
 
-    public override void _Ready()
+    protected void InitWeapon()
     {
-        crosshairs = (Crosshairs)GetNode("../../../HUD/Crosshairs");
+        if(HasNode("../../../HUD/Crosshairs"))
+        {
+            crosshairs = (Crosshairs)GetNode("../../../HUD/Crosshairs");
+        }
     }
 
     public override void _Process(float delta)
@@ -37,23 +44,34 @@ public class Weapon: Spatial
 
     public void AttackAction()
     {
+        string entityName = entityNode.GetType().Name;
+        string weaponName = GetType().Name;
+
         if(TYPE == "firearm")
         {
             RayCast ray = (RayCast)GetNode("Ray_cast");
             ray.ForceRaycastUpdate();
 
+            loadedAmmo -= 1;
+
             if(ray.IsColliding())
             {
                 dynamic body = ray.GetCollider();
-
-                if(body.GetType().Name != entityNode.GetType().Name && body.HasMethod("AttackHit"))
+                if(body.GetType().Name != entityName && body.HasMethod("AttackHit"))
                 {
                     Godot.Collections.Array targetGroups = body.GetChild(ray.GetColliderShape()).GetGroups();
-
                     if(targetGroups.Count > 0)
                     {
-                        crosshairs.ShowCrosshair(GetType().Name + "_hit");
-                        body.AttackHit(DAMAGE[(string)targetGroups[0]], ray.GetGlobalTransform());
+                        string group = (string)targetGroups[0];
+                        if(DAMAGE.ContainsKey(group))
+                        {
+                            if(entityName == "Player")
+                            {
+                                crosshairs.ShowCrosshair(weaponName + "_hit");
+                            }
+                            crosshairTimer = 0;
+                            body.AttackHit(DAMAGE[group], ray.GetGlobalTransform());
+                        }
                     }
                 }
             }
@@ -65,20 +83,19 @@ public class Weapon: Spatial
 
             foreach(dynamic body in bodies)
             {
-                if(body.GetType().Name != entityNode.GetType().Name && body.HasMethod("AttackHit"))
+                if(body.GetType().Name != entityName && body.HasMethod("AttackHit"))
                 {
-                    Godot.Collections.Array targetGroups = body.GetGroups(); // TODO: shape ?
-
-                    if(targetGroups.Count > 0)
+                    if(entityName == "Player")
                     {
-                        crosshairs.ShowCrosshair(GetType().Name + "_hit");
-                        body.AttackHit(DAMAGE[(string)targetGroups[0]], area.GetGlobalTransform());
+                        crosshairs.ShowCrosshair(weaponName + "_hit");
                     }
+                    crosshairTimer = 0;
+                    body.AttackHit(DAMAGE["body"], area.GetGlobalTransform());
                 }
             }
         }
 
-        crosshairTimer = 0;
+        entityNode.CreateSound(weaponName + "_fire");
     }
 
     public bool EquipWeapon()
@@ -94,7 +111,10 @@ public class Weapon: Spatial
         if(entityNode.entityAnimation.currentState == "Idle_unarmed")
         {
             entityNode.entityAnimation.SetAnimation(weaponName + "_equip");
-            crosshairs.ChangeCrosshair(weaponName + "_idle");
+            if(entityNode.GetType().Name == "Player")
+            {
+                crosshairs.ChangeCrosshair(weaponName + "_idle");
+            }
         }
 
         return false;
@@ -107,12 +127,53 @@ public class Weapon: Spatial
         if(entityNode.entityAnimation.currentState == weaponName + "_idle")
         {
             entityNode.entityAnimation.SetAnimation(weaponName + "_unequip");
-            crosshairs.HideAll();
+            if(entityNode.GetType().Name == "Player")
+            {
+                crosshairs.HideAll();
+            }
         }
 
         if(entityNode.entityAnimation.currentState == "Idle_unarmed")
         {
             isWeaponEnabled = false;
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool ReloadWeapon()
+    {
+        string weaponName = GetType().Name;
+        bool canReload = false;
+
+        if(entityNode.entityAnimation.currentState == weaponName + "_idle")
+        {
+            canReload = true;
+        }
+
+        if(spareAmmo <= 0 || loadedAmmo == MAX_AMMO)
+        {
+            canReload = false;
+        }
+
+        if(canReload == true)
+        {
+            int ammoNeeded = MAX_AMMO - loadedAmmo;
+
+            if(spareAmmo >= ammoNeeded)
+            {
+                spareAmmo -= ammoNeeded;
+                loadedAmmo = MAX_AMMO;
+            }
+            else
+            {
+                loadedAmmo += spareAmmo;
+                spareAmmo = 0;
+            }
+
+            entityNode.entityAnimation.SetAnimation(weaponName + "_reload");
+
             return true;
         }
 

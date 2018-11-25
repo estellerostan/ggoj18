@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Pistol_fire.wav-44654995d3131e058999b2358cb153ee.sample"
+
+[deps]
+
+source_file="res://Entities/Weapons/Pistol/Assets/Pistol_fire.wav"
+dest_files=[ "res://.import/Pistol_fire.wav-44654995d3131e058999b2358cb153ee.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0
