@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class Player: KinematicBody
 {
     static float MOUSE_SENSITIVITY = 0.05F;
+    static float MOUSE_SENSITIVITY_SCROLL_WHEEL = 0.08F;
     static float GRAVITY = -24.8F;
     static float ACCELERATION = 4.5F;
     static int DEACCELERATION = 16;
@@ -33,6 +34,7 @@ public class Player: KinematicBody
 
     Vector3 velocity = new Vector3();
     bool isSprinting = false;
+    float mouseScroll = 0;
     int health = 100;
 
     public override void _Ready()
@@ -66,15 +68,51 @@ public class Player: KinematicBody
 
     public override void _Input(InputEvent @event)
     {
-        if(@event is InputEventMouseMotion && Input.GetMouseMode() == Input.MouseMode.Captured)
+        if(Input.GetMouseMode() == Input.MouseMode.Captured)
         {
-            InputEventMouseMotion mouseMotion = (InputEventMouseMotion)@event;
-            rotationBodyTop.RotateX(Mathf.Deg2Rad(mouseMotion.Relative.y * MOUSE_SENSITIVITY));
-            RotateY(Mathf.Deg2Rad(mouseMotion.Relative.x * MOUSE_SENSITIVITY * -1));
+            if(@event is InputEventMouseMotion)
+            {
+                InputEventMouseMotion mouseMotion = (InputEventMouseMotion)@event;
 
-            Vector3 cameraRotation = rotationBodyTop.GetRotationDegrees();
-            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -70, 70);
-            rotationBodyTop.SetRotationDegrees(cameraRotation);
+                rotationBodyTop.RotateX(Mathf.Deg2Rad(mouseMotion.Relative.y * MOUSE_SENSITIVITY));
+                RotateY(Mathf.Deg2Rad(mouseMotion.Relative.x * MOUSE_SENSITIVITY * -1));
+
+                Vector3 cameraRotation = rotationBodyTop.GetRotationDegrees();
+                cameraRotation.x = Mathf.Clamp(cameraRotation.x, -70, 70);
+                rotationBodyTop.SetRotationDegrees(cameraRotation);
+            }
+
+            if(@event is InputEventMouseButton)
+            {
+                InputEventMouseButton mouseButton = (InputEventMouseButton)@event;
+
+                if(mouseButton.GetButtonIndex() == (int)ButtonList.WheelUp || mouseButton.GetButtonIndex() == (int)ButtonList.WheelDown)
+                {
+                    if(mouseButton.GetButtonIndex() == (int)ButtonList.WheelUp)
+                    {
+                        mouseScroll += MOUSE_SENSITIVITY_SCROLL_WHEEL;
+                    }
+                    else if(mouseButton.GetButtonIndex() == (int)ButtonList.WheelDown)
+                    {
+                        mouseScroll -= MOUSE_SENSITIVITY_SCROLL_WHEEL;
+                    }
+
+                    mouseScroll = Mathf.Clamp(mouseScroll, 0, WEAPON_NAME.Count - 1);
+
+                    if(changingWeapon == false)
+                    {
+                        if(reloadingWeapon == false)
+                        {
+                            var round_mouse_scroll_value = (int)Mathf.Round(mouseScroll);
+                            if(WEAPON_NAME[round_mouse_scroll_value] != currentWeaponName){
+                                changingWeaponName = WEAPON_NAME[round_mouse_scroll_value];
+                                changingWeapon = true;
+                                mouseScroll = round_mouse_scroll_value;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -174,6 +212,7 @@ public class Player: KinematicBody
         {
             changingWeaponName = WEAPON_NAME[weaponChangeNumber];
             changingWeapon = true;
+            mouseScroll = weaponChangeNumber;
         }
 
         if(Input.IsActionPressed("attack") && reloadingWeapon == false && changingWeapon == false)

@@ -15,7 +15,7 @@ public class Weapon: Spatial
     public bool isWeaponEnabled = false;
     public bool canReload = true;
     public int loadedAmmo = 0;
-    public int spareAmmo = 200;
+    public int spareAmmo = 200; // TODO: temp dev, 0
     float crosshairTimer = -1;
 
     protected void InitWeapon()
