@@ -28,7 +28,7 @@ public class Button_play: Button
         Node oldScene = GetTree().GetCurrentScene();
         PackedScene nextScene = (PackedScene)GD.Load("res://Scenes/Level0/Level0.tscn");
         GetTree().ChangeSceneTo(nextScene);
-        GetTree().SetCurrentScene(nextScene.Instance());
+        //GetTree().SetCurrentScene(nextScene.Instance());
         oldScene.Free();
     }
 }
